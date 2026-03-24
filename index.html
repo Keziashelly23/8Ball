@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Magic Chatbot</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #chatbox {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            width: 350px;
+        }
+
+        #messages {
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .user { text-align: right; margin: 8px; }
+        .bot { text-align: left; margin: 8px; color: #38bdf8; }
+
+        input {
+            width: 70%;
+            padding: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background: #38bdf8;
+            border: none;
+            color: black;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chatbox">
+        <h2>🎱 Ask Me Anything</h2>
+        <div id="messages"></div>
+
+        <input id="input" placeholder="Ask a question..." />
+        <button onclick="send()">Send</button>
+    </div>
+
+<script>
+async function send() {
+    const input = document.getElementById("input");
+    const msg = input.value;
+    const messages = document.getElementById("messages");
+
+    if (!msg.trim()) return;
+
+    messages.innerHTML += `<div class="user">${msg}</div>`;
+
+    const res = await fetch("/ask", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({question: msg})
+    });
+
+    const data = await res.json();
+
+    messages.innerHTML += `<div class="bot">${data.answer}</div>`;
+
+    input.value = "";
+    messages.scrollTop = messages.scrollHeight;
+}
+</script>
+
+</body>
+</html>
